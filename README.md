@@ -68,7 +68,7 @@ Using Radarr to Plex Collections is a breeze:
         6. Copy the value of the `X-Plex-Token` parameter (value after =) and paste it into the `PlexToken` field in your `config.json` file. 
         7. Save and close the confif file.
     - **MinForCollection**: Set `"MinForCollection"` to the minimum number of movies required to create a collection. For example, if you set it to `2`, collections will only be created when you have 2 or more movies in that collection in your Plex library.
-    - **LibraryName**: Replace `"library_name_here"` with the name of the library in Plex for which you want to create collections. This will most likely be named "Movies".
+    - **LibraryName**: Replace `"Movies"` with the name of the library in Plex for which you want to create collections if yours is different.
     - **DeleteExistingPlexCollections**: Acceptable values are `true` or `false`. If set to true the application will delete all pre-existing collections within plex. It is advised to set to true if Plex auto-generated some collections as this application may generate a duplicate collection with a slightly different name. Keep in Mind this will delete any collections you created manually as well.
     - **Exclusions**: Optionally, fill out the `"Exclusions"` array with the names of collections you want to exclude from synchronization. Do not delete the placeholders if you don't need to exclude any collections. Ensure to follow the format mentioned in the Exclusions Configuration section below.
 
