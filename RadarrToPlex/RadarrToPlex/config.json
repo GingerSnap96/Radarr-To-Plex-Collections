@@ -1,0 +1,17 @@
+{
+  "RadarrURL": "your_radarr_url_here",
+  "RadarrAPIKey": "your_radarr_api_key_here",
+  "PlexURL": "your_plex_url_here",
+  "PlexToken": "your_plex_token_here",
+  "MinForCollection": 2,
+  "LibraryName": "Movies",
+  "DeleteExistingPlexCollections": false,
+  "Exclusions": [
+    {
+      "CollectionName": "Put the name of collections"
+    },
+    {
+      "CollectionName": "you want to exclude in this list"
+    }
+  ]
+}
