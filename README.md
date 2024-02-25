@@ -41,6 +41,14 @@ Radarr to Plex Collections is compatible with the following operating systems an
 | Linux (Debian)   | x86, x64, ARM| ✅            |
 | macOS            | x64, ARM     | ✅            |
 
+## 💾 Backup Plex
+
+It's recommended that you back up your Plex server before running this application. Backing up your Plex server ensures that you can recover your media library and settings in case you don't like what Radarr to Plex Collections does or in case of data loss/system failure.
+
+If you're not familiar with how to backup your Plex server, I recommend [Lon.Tv's Guide](https://www.youtube.com/watch?v=aA4GMoUU2Zg) as the process varies depending on your operating system.
+
+
+
 ## 💡 Getting Started
 
 To get started with Radarr to Plex Collections, follow these simple steps:
