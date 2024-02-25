@@ -93,7 +93,11 @@ Using Radarr to Plex Collections is a breeze:
         2. Add a new line specifying the desired schedule and command to run the `RadarrToPlex` executable. Make sure to specify the full path to the directory containing the executable.
 
     - **For macOS**:
-        - Double-click the `RadarrToPlex` executable to launch the application (It will have no extension).
+        - Double-click the `RadarrToPlex` executable to launch the application(It will have no extension). 
+        - You may get a security warning and your OS will prevent the app from running, if so follow the steps below.
+            - Open Settings > Security and Privacy > General Tab 
+            - If you just tried to run the application there should be an option to allow the application, select allow.
+        - Double-click the `RadarrToPlex` executable to launch the application
 
 3. **Review Log File:** Each time the application runs it will create a log file for you to review the output of the application. 
     - For Windows and Linux this folder will be created in the folder the executable is in. 
