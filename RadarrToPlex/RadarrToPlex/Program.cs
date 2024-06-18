@@ -787,7 +787,7 @@ namespace RadarrToPlex
                     // Convert collection name to URL format
                     string title = Uri.EscapeDataString(collectionName);
 
-                    string collectionURL = $"{plexURL}/library/collections?type=1&title={title}&smart=0&uri=server%3A%2F%2F{serverId}%2Fcom.plexapp.plugins.library%2Flibrary%2Fmetadata%2F{ratingKey}&sectionId=1&X-Plex-Product=Plex%20Web&X-Plex-Version=4.123.2&X-Plex-Client-Identifier=1mjve8qjaa7j8aodxmk18eo5&X-Plex-Platform=Microsoft%20Edge&X-Plex-Platform-Version=121.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Microsoft%20Edge&X-Plex-Device-Screen-Resolution=2505x1289%2C2561x1440&X-Plex-Token={plexToken}&X-Plex-Provider-Version=6.5&X-Plex-Text-Format=plain&X-Plex-Drm=playready&X-Plex-Language=en";
+                    string collectionURL = $"{plexURL}/library/collections?type=1&title={title}&smart=0&uri=server%3A%2F%2F{serverId}%2Fcom.plexapp.plugins.library%2Flibrary%2Fmetadata%2F{ratingKey}&sectionId={libraryId}&X-Plex-Product=Plex%20Web&X-Plex-Version=4.123.2&X-Plex-Client-Identifier=1mjve8qjaa7j8aodxmk18eo5&X-Plex-Platform=Microsoft%20Edge&X-Plex-Platform-Version=121.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Microsoft%20Edge&X-Plex-Device-Screen-Resolution=2505x1289%2C2561x1440&X-Plex-Token={plexToken}&X-Plex-Provider-Version=6.5&X-Plex-Text-Format=plain&X-Plex-Drm=playready&X-Plex-Language=en";
 
                     // Create HttpRequestMessage with HttpMethod.Post
                     var request = new HttpRequestMessage(HttpMethod.Post, collectionURL);
