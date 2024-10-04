@@ -20,6 +20,7 @@ namespace RadarrToPlex
         static string libraryName = "";
         static int libraryId = 0;
         static bool delExistingCollections = false;
+        static bool shortenCollectionName = false;
 
         // Define class for Plex collections
         class PlexCollections
@@ -52,6 +53,7 @@ namespace RadarrToPlex
             public string File { get; set; }
             public int CollectionId { get; set; }
             public string CollectionName { get; set; }
+            public string CollectionDesc { get; set; }
         }
 
         // Initialize dictionary to store Radarr movie details
@@ -162,6 +164,7 @@ namespace RadarrToPlex
                 libraryName = config.LibraryName;
                 minForCollection = config.MinForCollection;
                 delExistingCollections = config.DeleteExistingPlexCollections;
+                shortenCollectionName = config.ShortenCollectionName;
 
                 // Parse exclusions
                 foreach (var exclusion in config.Exclusions)
@@ -549,9 +552,19 @@ namespace RadarrToPlex
                         {
                             int collectionId = collection["id"].ToObject<int>();
                             int tmdbId = collection["tmdbId"].ToObject<int>();
-                            string collectionName = collection["title"].ToString();
+                            string collectionDesc = collection["overview"].ToString();
+                            string collectionName;
+                            if (shortenCollectionName)
+                            {
+                                collectionName = collection["title"].ToString().Replace(" Collection","");
+                            }
+                            else
+                            {
+                                collectionName = collection["title"].ToString();
+                            }    
+                            
 
-                            await GetRadarrMoviesInCollection(collectionId, collectionName);
+                            await GetRadarrMoviesInCollection(collectionId, collectionName, collectionDesc);
                         }
                     }
                     else
@@ -573,7 +586,7 @@ namespace RadarrToPlex
         }
 
         // Method to fetch movies in a Radarr collection
-        static async Task GetRadarrMoviesInCollection(int collectionId, string collectionName)
+        static async Task GetRadarrMoviesInCollection(int collectionId, string collectionName, string collectionDesc)
         {
             // Create HttpClient instance
             using (HttpClient client = new HttpClient())
@@ -595,7 +608,7 @@ namespace RadarrToPlex
                             int movieTmdbId = movie["tmdbId"].ToObject<int>();
                             string movieTitle = movie["title"].ToString();
 
-                            await GetRadarrMovieDetails(movieTmdbId, collectionId, collectionName, movieTitle);
+                            await GetRadarrMovieDetails(movieTmdbId, collectionId, collectionName, movieTitle, collectionDesc);
                         }
                     }
                     else
@@ -617,7 +630,7 @@ namespace RadarrToPlex
         }
 
         // Method to fetch details of a movie in Radarr collection
-        static async Task GetRadarrMovieDetails(int movieTmdbId, int collectionId, string collectionName, string title)
+        static async Task GetRadarrMovieDetails(int movieTmdbId, int collectionId, string collectionName, string title, string collectionDesc)
         {
             // Create HttpClient instance
             using (HttpClient client = new HttpClient())
@@ -672,6 +685,7 @@ namespace RadarrToPlex
                             File = radarrPath,
                             CollectionId = collectionId,
                             CollectionName = collectionName,
+                            CollectionDesc = collectionDesc,
                         };
 
                         // Store the movie details in the dictionary
@@ -746,6 +760,7 @@ namespace RadarrToPlex
                         {
                             int ratingKey = plexMovie.RatingKey;
                             string movieTitle = plexMovie.Title;
+                            string collectionDesc = radarrMovie.CollectionDesc;
 
                             bool inCollection = plexMovie.Collections.Contains(collectionName);
                             bool collectionExists = plexcollectionsDictionary.ContainsKey(collectionName);
@@ -759,7 +774,7 @@ namespace RadarrToPlex
                             // Create the collection and add the movie if the collection doesn't exist
                             else if (!inCollection && !collectionExists)
                             {
-                                await CreateCollection(collectionName, ratingKey);
+                                await CreateCollection(collectionName, ratingKey, collectionDesc);
                                 Log.Information($"Successfully created collection: {collectionName} and added {movieTitle} to collection");
                             }
                             Log.Information($"Movie {movieTitle} already exists in collection {collectionName}, skipping.");
@@ -778,7 +793,7 @@ namespace RadarrToPlex
 
 
         // Method to create a new collection in Plex
-        static async Task CreateCollection(string collectionName, int ratingKey)
+        static async Task CreateCollection(string collectionName, int ratingKey, string collectionDesc)
         {
             try
             {
@@ -787,7 +802,12 @@ namespace RadarrToPlex
                     // Convert collection name to URL format
                     string title = Uri.EscapeDataString(collectionName);
 
-                    string collectionURL = $"{plexURL}/library/collections?type=1&title={title}&smart=0&uri=server%3A%2F%2F{serverId}%2Fcom.plexapp.plugins.library%2Flibrary%2Fmetadata%2F{ratingKey}&sectionId={libraryId}&X-Plex-Product=Plex%20Web&X-Plex-Version=4.123.2&X-Plex-Client-Identifier=1mjve8qjaa7j8aodxmk18eo5&X-Plex-Platform=Microsoft%20Edge&X-Plex-Platform-Version=121.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Microsoft%20Edge&X-Plex-Device-Screen-Resolution=2505x1289%2C2561x1440&X-Plex-Token={plexToken}&X-Plex-Provider-Version=6.5&X-Plex-Text-Format=plain&X-Plex-Drm=playready&X-Plex-Language=en";
+                    if (shortenCollectionName)
+                    {
+                        collectionName = collectionName.Replace(" Collection", "");
+                    }
+
+                    string collectionURL = $"{plexURL}/library/collections?type=1&title={title}&summary.value=Testing summary update&smart=0&uri=server%3A%2F%2F{serverId}%2Fcom.plexapp.plugins.library%2Flibrary%2Fmetadata%2F{ratingKey}&sectionId={libraryId}&X-Plex-Product=Plex%20Web&X-Plex-Version=4.123.2&X-Plex-Client-Identifier=1mjve8qjaa7j8aodxmk18eo5&X-Plex-Platform=Microsoft%20Edge&X-Plex-Platform-Version=121.0&X-Plex-Features=external-media%2Cindirect-media%2Chub-style-list&X-Plex-Model=hosted&X-Plex-Device=Windows&X-Plex-Device-Name=Microsoft%20Edge&X-Plex-Device-Screen-Resolution=2505x1289%2C2561x1440&X-Plex-Token={plexToken}&X-Plex-Provider-Version=6.5&X-Plex-Text-Format=plain&X-Plex-Drm=playready&X-Plex-Language=en";
 
                     // Create HttpRequestMessage with HttpMethod.Post
                     var request = new HttpRequestMessage(HttpMethod.Post, collectionURL);
@@ -803,16 +823,33 @@ namespace RadarrToPlex
                         {
                             // Parse and store the index from the XML response
                             string responseBody = await response.Content.ReadAsStringAsync();
-                            int index = ParseIndex(responseBody);
+                            XmlDocument xmlDoc = new XmlDocument();
+                            xmlDoc.LoadXml(responseBody);
+
+                            // Get the ratingKey attribute from the Directory element
+                            XmlNode directoryNode = xmlDoc.SelectSingleNode("//Directory");
+
+                            int collectionID = 0;
+
+                            if (directoryNode != null)
+                            {
+                                collectionID = int.Parse(directoryNode.Attributes["ratingKey"].Value);
+                            }
 
                             // Create a new PlexCollections object
                             PlexCollections collectionDetails = new PlexCollections
                             {
-                                CollectionId = index,
+                                CollectionId = collectionID,
                                 CollectionName = collectionName
                             };
                             // Add to the collection
                             plexcollectionsDictionary.Add(collectionName, collectionDetails);
+
+                            if (collectionID != 0)
+                            {
+                                // Add the description if the collectionid is known
+                                AddDescriptionToCollection(collectionID, collectionName, collectionDesc);
+                            }
                         }
                         else
                         {
@@ -865,6 +902,43 @@ namespace RadarrToPlex
             {
                 // Log error
                 Log.Error($"Error adding movie {movieTitle} in collection: {e.Message}");
+                Console.WriteLine("Error: Please review the most recent log file errors and make required corrections.");
+                Environment.Exit(1);
+            }
+        }
+
+        // Method to add a description to a collection
+        static async Task AddDescriptionToCollection(int collectionID, string collectionName, string collectionDesc)
+        {
+            try
+            {
+                string encodedCollectionDesc = Uri.EscapeDataString(collectionDesc);
+                //string title = Uri.EscapeDataString(collectionName);
+                string collectionURL = $"{plexURL}/library/sections/{libraryId}/all?type=18&id={collectionID}&includeExternalMedia=1&summary.value={encodedCollectionDesc}&summary.locked=1&X-Plex-Token={plexToken}";
+
+                // Create HttpRequestMessage with HttpMethod.Post
+                var request = new HttpRequestMessage(HttpMethod.Put, collectionURL);
+
+                // Create HttpClient
+                using (HttpClient client = new HttpClient())
+                {
+                    // Send POST request
+                    HttpResponseMessage response = client.SendAsync(request).Result;
+
+                    // Check if request was successful
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        // Log error
+                        Log.Error($"Error adding description to collection: {collectionName}");
+                        Console.WriteLine("Error: Please review the most recent log file errors and make required corrections.");
+                        Environment.Exit(1);
+                    }
+                }
+            }
+            catch (HttpRequestException e)
+            {
+                // Log error
+                Log.Error($"Error adding description to collection: {collectionName} - {e.Message}");
                 Console.WriteLine("Error: Please review the most recent log file errors and make required corrections.");
                 Environment.Exit(1);
             }

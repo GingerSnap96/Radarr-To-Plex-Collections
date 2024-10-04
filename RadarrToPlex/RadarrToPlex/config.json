@@ -6,6 +6,7 @@
   "MinForCollection": 2,
   "LibraryName": "Movies",
   "DeleteExistingPlexCollections": false,
+  "ShortenCollectionName": true,
   "Exclusions": [
     {
       "CollectionName": "Put the name of collections"
