@@ -78,6 +78,7 @@ Using Radarr to Plex Collections is a breeze:
     - **MinForCollection**: Set `"MinForCollection"` to the minimum number of movies required to create a collection. For example, if you set it to `2`, collections will only be created when you have 2 or more movies in that collection in your Plex library.
     - **LibraryName**: Replace `"Movies"` with the name of the library in Plex for which you want to create collections if yours is different.
     - **DeleteExistingPlexCollections**: Acceptable values are `true` or `false`. If set to true the application will delete all pre-existing collections within plex. It is advised to set to true if Plex auto-generated some collections as this application may generate a duplicate collection with a slightly different name. Keep in Mind this will delete any collections you created manually as well.
+    - **ShortenCollectionName**: Acceptable values are `true` or `false`. If set to true the application will remove "collection" from the name of the collection. For example, if set to true, "Harry Potter Collection" would be shortened to to "Harry Potter". If False is set, it will use the default names from Radarr.
     - **Exclusions**: Optionally, fill out the `"Exclusions"` array with the names of collections you want to exclude from synchronization. Do not delete the placeholders if you don't need to exclude any collections. Ensure to follow the format mentioned in the Exclusions Configuration section below.
 
 2. **Run the Application**:
