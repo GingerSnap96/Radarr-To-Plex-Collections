@@ -721,7 +721,7 @@ namespace RadarrToPlex
             int percentIncrease = 0;
             int currentCollection = 0;
             int totalCollections = groupedMovies.Count();
-            int percentIncrement = (int)Math.Round((double)totalCollections / 35);
+            int percentIncrement = Math.Max(1, (int)Math.Round((double)totalCollections / 35));
 
             // Iterate over each group of movies by collection
             foreach (var group in groupedMovies)
@@ -998,25 +998,43 @@ namespace RadarrToPlex
         // Method to update progress bar
         static void UpdateProgressBar(int percent, string message)
         {
-            int totalBars = 50;
-            int numBars = (int)Math.Round((double)percent / 100 * totalBars);
-
-            string progressBar = $"[{new string('#', numBars)}{new string(' ', totalBars - numBars)}] {percent}% : ";
-
-            // Pad or truncate the message to fit within the existing line
-            if (message.Length > Console.WindowWidth - progressBar.Length)
+            try
             {
-                message = message.Substring(0, Console.WindowWidth - progressBar.Length);
-            }
-            else
-            {
-                message = message.PadRight(Console.WindowWidth - progressBar.Length);
-            }
+                int totalBars = 50;
 
-            Console.SetCursorPosition(0, Console.CursorTop);
-            Console.Write(progressBar + message);
+                // Clamp percent to valid range
+                percent = Math.Max(0, Math.Min(100, percent));
+
+                int numBars = (int)Math.Round((double)percent / 100 * totalBars);
+
+                string progressBar = $"[{new string('#', numBars)}{new string(' ', totalBars - numBars)}] {percent}% : ";
+
+                int availableSpace = Console.WindowWidth - progressBar.Length;
+
+                if (availableSpace > 0)
+                {
+                    if (message.Length > availableSpace)
+                    {
+                        message = message.Substring(0, availableSpace);
+                    }
+                    else
+                    {
+                        message = message.PadRight(availableSpace);
+                    }
+                }
+                else
+                {
+                    // If the console width is too narrow, display progress only.
+                    message = string.Empty;
+                }
+
+                Console.SetCursorPosition(0, Console.CursorTop);
+                Console.Write(progressBar + message);
+            }
+            catch (DivideByZeroException)
+            {
+                return;
+            }
         }
-
-
     }
 }
