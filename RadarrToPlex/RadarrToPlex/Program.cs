@@ -435,7 +435,7 @@ namespace RadarrToPlex
                         {
                             int totalMovies = videoNodes.Count;
                             int currentMovie = 0;
-                            int percentIncrement = (int)Math.Round((double)totalMovies / 54);
+                            int percentIncrement = Math.Max(1, (int)Math.Round((double)totalMovies / 54));
                             int percentIncrease = 0;
                             foreach (XmlNode videoNode in videoNodes)
                             {
@@ -1005,7 +1005,7 @@ namespace RadarrToPlex
                 // Clamp percent to valid range
                 percent = Math.Max(0, Math.Min(100, percent));
 
-                int numBars = (int)Math.Round((double)percent / 100 * totalBars);
+                int numBars = Math.Max(1, (int)Math.Round((double)percent / 100 * totalBars));
 
                 string progressBar = $"[{new string('#', numBars)}{new string(' ', totalBars - numBars)}] {percent}% : ";
 
